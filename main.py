@@ -1,21 +1,61 @@
 from pprint import pprint
-
+from hh_get_company import connect_vacancy
 import requests
-def connect(id_company):
-    # Реализация подключения к API hh.ru
 
-    url_hh = f"https://api.hh.ru/employers/{id_company}"
-    # params = {'employer_id': id_company,
-    #           'per_page': '100'}
-    headers = {
-        "User-Agent": "50355527",  # User-Agent header взятый из личного кабинета хх ру
-    }
+from work_whith_BD import create_database, write_table
 
-    response = requests.get(url_hh, headers=headers)
+ID_COMPANY = [9498112]#, 3529, 78638, 2324020, 2000762, 1918903, 1579449, 873105, 80, 1049556, 3388]
 
-    if response.status_code == 200:
-        list_datd = response.json()
+input(f'Привет. сейчас загружу для тебя БД с вакансиями по {len(ID_COMPANY)} кампаниями\n'
+      'Нажми ентер')
 
-    return list_datd
+print('Создаем базу данных и таблицы')
+create_database()  #  функция создание БД и создание таблиц
 
-pprint(connect(3529))
+print('Загружаем БД')
+for one_id in ID_COMPANY:
+    vac_list = connect_vacancy(one_id)
+    #  Вставить функцию заполнения БД
+    write_table(vac_list, one_id)
+    print('||||||||', vac_list['items'][0]['employer']['name'], '|||||||||||||||||||||||||||||||||||||||')
+    count_vacancy = vac_list['found']
+    print(f'Всего ваканcий {count_vacancy}, в БД добавленно до 100')
+    #pprint(vac_list['items'][0])
+
+    # for vac in vac_list['items']:
+    #
+    #     print(vac['name'], vac['salary'], vac['alternate_url'])  # ['salary_to'], vac_list['items'][0]['salary_from']) #, vac_list['items'][0]['company_id'],vac_list['items'][0]['company_name'], vac_list['items'][0]['number_of_vacancies'])
+    #
+
+
+while True:
+    user_call = input('Что тебе показать? Пиши цифры.\n'
+                      '1 - список всех компаний и количество вакансий у каждой\n'
+                      '2 - список вакансий, название компании, зп, ссылка на вакансию\n'
+                      '3 - показать среднюю зп по вакансиям\n'
+                      '4 - вакансии с зп выше среднего по всем вакансиям\n'
+                      '5 - вакансии со словом python\n'
+                      'Для выхода введи стоп\n')
+
+    if user_call == '1':
+        pass
+
+    elif user_call == '2':
+        pass
+
+    elif user_call == '3':
+        pass
+
+    elif user_call == '4':
+        pass
+
+    elif user_call == '5':
+        pass
+
+    elif user_call == 'stop' or user_call == 'cnjg' or user_call == 'стоп':
+        break
+
+    else:
+        print('Не понимаю тебя')
+        input('Начнем снова, нажми enter')
+
