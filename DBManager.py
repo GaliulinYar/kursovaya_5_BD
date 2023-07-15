@@ -1,3 +1,5 @@
+import psycopg2
+
 class DBManager:
 
     def __init__(self):
@@ -17,7 +19,7 @@ class DBManager:
         pass
 
     def get_vacancies_with_higher_salary():
-        """получает список всех вакансий,у которых зg выше средней по всем вакансиям."""
+        """получает список всех вакансий,у которых зп выше средней по всем вакансиям."""
         pass
 
     def get_vacancies_with_keyword():
