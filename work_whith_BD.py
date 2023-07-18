@@ -1,10 +1,9 @@
 import psycopg2
-from config import config
-
-# params1 = config()
+from read_command_db import read_command
 
 
 def create_database():
+    """фугкция создание новой БД и таблиц с заголовками"""
     conn = psycopg2.connect(host='localhost', user='postgres', password='qwerty', port=5432)
     conn.autocommit = True
     cur = conn.cursor()
@@ -27,7 +26,7 @@ def create_database():
         cur.execute("""
         CREATE TABLE vacancies (
         vacancy_name varchar(255),
-        company_id int,
+        company_id int REFERENCES company_info(company_id),
         salary_from int,
         salary_to int,
         url text)""")
@@ -37,32 +36,35 @@ def create_database():
 
 
 def write_table(data_list, company_id):
-
-    # vac['name']
-    #     vac['salary']
-    #     vac['salary']['from']
-    #     vac['salary']['to']
-    # company_id
-    # vac['alternate_url']
-    # vac['items'][0]['employer']['name']
-
-    #corteg_for_table = (company_id, data_list['items'][0]['employer']['name'], data_list['found'])
-    #print(corteg_for_table)
+    """функция заполнения таблиц в БД нужными данными"""
 
     conn = psycopg2.connect(host='localhost', database='database_hhru', user='postgres', password='qwerty', port=5432)  # Данные БД
 
     cur = conn.cursor()  # Включение курсора
     corteg_for_table = (company_id, data_list['items'][0]['employer']['name'], data_list['found'])
-    cur.execute('INSERT INTO company_info VALUES (%s, %s, %s)', corteg_for_table)  # Добавление списка кортежей в таблицы
+    cur.execute(read_command(0), corteg_for_table)  # Добавление списка кортежей в таблицы
 
+    for data in data_list['items']:  # перебираем список вакансий
 
+        vacancy_name = data['name']
+        if data['salary'] is None:
+            salary_from = 0
+            salary_to = 0
+        else:
+            if data['salary']['from'] is None:
+                salary_from = 0
+            else:
+                salary_from = data['salary']['from']
 
-        # cur.executemany('INSERT INTO customers VALUES (%s, %s, %s)', list_from_customers_data[1:])  # Добавление списка кортежей в таблицы
-        # cur.executemany('INSERT INTO orders VALUES (%s, %s, %s, %s, %s)', list_from_orders_data[1:])  # Добавление списка кортежей в таблицы
-        #
-        # cur.execute("""SELECT company_name FROM customers WHERE company_name LIKE '%v%'""")
+            if data['salary']['to'] is None:
+                salary_to = 0
+            else:
+                salary_to = data['salary']['to']
+        url = data['alternate_url']
+
+        corteg_for_table2 = (vacancy_name, company_id, salary_from, salary_to, url)  # создаем кортеж для загрузки в таблицу
+        cur.execute(read_command(1), corteg_for_table2)
 
     conn.commit()
     cur.close()  # Закрываем курсор
     conn.close()  # Закрываем подключение к БД
-
