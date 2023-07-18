@@ -1,16 +1,17 @@
-from pprint import pprint
+from DBManager import DBManager
 from hh_get_company import connect_vacancy
-import requests
-
+from config import config
 from work_whith_BD import create_database, write_table
 
-ID_COMPANY = [9498112]#, 3529, 78638, 2324020, 2000762, 1918903, 1579449, 873105, 80, 1049556, 3388]
+ID_COMPANY = [9498112, 3529, 78638, 2324020, 2000762, 1918903, 1579449, 873105, 80, 1049556, 3388]
+params = config()
+DB_class = DBManager(params)  # Экземляр класса с параметрами из файла databas.ini
 
 input(f'Привет. сейчас загружу для тебя БД с вакансиями по {len(ID_COMPANY)} кампаниями\n'
       'Нажми ентер')
 
 print('Создаем базу данных и таблицы')
-create_database()  #  функция создание БД и создание таблиц
+create_database()  # функция создание БД и создание таблиц
 
 print('Загружаем БД')
 for one_id in ID_COMPANY:
@@ -20,12 +21,6 @@ for one_id in ID_COMPANY:
     print('||||||||', vac_list['items'][0]['employer']['name'], '|||||||||||||||||||||||||||||||||||||||')
     count_vacancy = vac_list['found']
     print(f'Всего ваканcий {count_vacancy}, в БД добавленно до 100')
-    #pprint(vac_list['items'][0])
-
-    # for vac in vac_list['items']:
-    #
-    #     print(vac['name'], vac['salary'], vac['alternate_url'])  # ['salary_to'], vac_list['items'][0]['salary_from']) #, vac_list['items'][0]['company_id'],vac_list['items'][0]['company_name'], vac_list['items'][0]['number_of_vacancies'])
-    #
 
 
 while True:
@@ -38,19 +33,19 @@ while True:
                       'Для выхода введи стоп\n')
 
     if user_call == '1':
-        pass
+        DB_class.get_companies_and_vacancies_count()
 
     elif user_call == '2':
-        pass
+        DB_class.get_all_vacancies()
 
     elif user_call == '3':
-        pass
+        DB_class.get_avg_salary()
 
     elif user_call == '4':
-        pass
+        DB_class.get_vacancies_with_higher_salary()
 
     elif user_call == '5':
-        pass
+        DB_class.get_vacancies_with_keyword()
 
     elif user_call == 'stop' or user_call == 'cnjg' or user_call == 'стоп':
         break
@@ -58,4 +53,3 @@ while True:
     else:
         print('Не понимаю тебя')
         input('Начнем снова, нажми enter')
-
